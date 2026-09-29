@@ -27,7 +27,7 @@ public sealed class JsonDateTimeReaderWriter : JsonValueReaderWriter<DateTime>
 
     /// <inheritdoc />
     public override void ToJsonTyped(Utf8JsonWriter writer, DateTime value)
-        => writer.WriteStringValue(value);
+        => writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", System.Globalization.CultureInfo.InvariantCulture));
 
     /// <inheritdoc />
     public override Expression ConstructorExpression

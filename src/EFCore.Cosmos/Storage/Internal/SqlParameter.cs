@@ -51,6 +51,8 @@ public abstract class SqlParameter(string name)
 /// </summary>
 public class SqlValueParameter(string name, object? value) : SqlParameter(name)
 {
+    private static readonly JsonSerializerOptions _options = new() { Converters = { new FixedWidthDateTimeConverter() } };
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -77,9 +79,11 @@ public class SqlValueParameter(string name, object? value) : SqlParameter(name)
     public override string ToJsonString()
     {
         using var stream = new MemoryStream();
+        
         using (var writer = new Utf8JsonWriter(stream, CosmosClientWrapper.JsonWriterOptions))
         {
-            JsonSerializer.Serialize(writer, Value);
+            JsonSerializer.Serialize(writer, Value,_options);
+            
         }
 
         return Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);

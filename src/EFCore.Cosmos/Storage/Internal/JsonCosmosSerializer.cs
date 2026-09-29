@@ -13,6 +13,7 @@ namespace Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 /// </summary>
 public class JsonCosmosSerializer : CosmosSerializer
 {
+    private static readonly JsonSerializerOptions _options = new() { Converters = { new FixedWidthDateTimeConverter() } };
     /// <inheritdoc />
     public override T FromStream<T>(Stream stream)
     {
@@ -27,7 +28,7 @@ public class JsonCosmosSerializer : CosmosSerializer
     {
         var stream = new MemoryStream();
         using var writer = new Utf8JsonWriter(stream, CosmosClientWrapper.JsonWriterOptions);
-        JsonSerializer.Serialize(writer, input);
+        JsonSerializer.Serialize(writer, input, _options);
         stream.Position = 0;
         return stream;
     }
